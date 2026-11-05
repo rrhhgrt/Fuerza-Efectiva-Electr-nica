@@ -7,7 +7,7 @@ st.set_page_config(
     layout="centered"
 )
 
-# Estilo CSS: Todo en mayúsculas por defecto, EXCEPTO el campo del correo Zimbra
+# Estilo CSS: Todo en mayúsculas y forzar teclado numérico en la casilla de pistola
 st.markdown("""
     <style>
     input, textarea {
@@ -23,7 +23,7 @@ st.title("🛡️ Jefatura de Policía de Montevideo")
 st.subheader("Ficha Personal y de Dotación")
 st.markdown("---")
 
-# Pantalla de doble validación de Cédula (Despliega teclado numérico al tocar)
+# Pantalla de doble validación de Cédula
 st.subheader("1. Validación de Identidad")
 col1, col2 = st.columns(2)
 
@@ -32,7 +32,6 @@ with col1:
 with col2:
     cedula_2_num = st.number_input("Reingrese su Cédula para confirmar", value=None, step=1, format="%d")
 
-# Convertir a texto para validar la longitud exacta de 8 dígitos
 cedula_1 = str(cedula_1_num) if cedula_1_num is not None else ""
 cedula_2 = str(cedula_2_num) if cedula_2_num is not None else ""
 
@@ -82,7 +81,6 @@ if cedula_valida:
         localidad = st.text_input("Ciudad o Localidad").upper()
         departamento = st.text_input("Departamento", value="MONTEVIDEO").upper()
         
-        # Campos numéricos (Abren teclado numérico en celulares)
         telefono = st.number_input("Número de Teléfono / Celular", value=None, step=1, format="%d")
         tel_emergencia = st.number_input("Teléfono de Emergencia", value=None, step=1, format="%d")
         
@@ -107,7 +105,11 @@ if cedula_valida:
         
         st.markdown("#### 🔫 Armamento")
         marca_arma = st.selectbox("Marca de Pistola", ["Seleccione...", "HK", "Glock"])
-        num_arma = st.text_input("Número de Pistola").upper()  # Mantiene texto por si incluye serie alfanumérica
+        
+        # Número de Pistola como número para que abra el teclado numérico en celulares
+        num_arma_num = st.number_input("Número de Pistola", value=None, step=1, format="%d")
+        num_arma = str(num_arma_num) if num_arma_num is not None else ""
+        
         cant_cargadores = st.number_input("Cantidad de Cargadores", min_value=0, value=3, step=1)
         cant_municiones = st.number_input("Cantidad de Municiones", min_value=0, value=15, step=1)
         
@@ -165,8 +167,8 @@ if cedula_valida:
         enviar = st.form_submit_button("Enviar Ficha de Registro")
         
         if enviar:
-            if not apellidos or not nombres or cargo == "Seleccione..." or marca_arma == "Seleccione..." or marca_chaleco == "Seleccione..." or not foto_cedula or legajo is None or telefono is None or num_chaleco is None:
-                st.error("Por favor, complete todos los campos obligatorios incluyendo la foto, legajo, teléfono y número de chaleco.")
+            if not apellidos or not nombres or cargo == "Seleccione..." or marca_arma == "Seleccione..." or marca_chaleco == "Seleccione..." or not foto_cedula or legajo is None or telefono is None or num_chaleco is None or num_arma_num is None:
+                st.error("Por favor, complete todos los campos obligatorios incluyendo la foto, legajo, teléfono, número de pistola y número de chaleco.")
             else:
                 st.success("¡Ficha enviada con éxito! Quedará pendiente de aprobación por la administración.")
                 st.balloons()
