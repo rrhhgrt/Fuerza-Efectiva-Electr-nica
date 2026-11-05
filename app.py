@@ -7,7 +7,7 @@ st.set_page_config(
     layout="centered"
 )
 
-# Estilo CSS: Todo en mayúsculas y forzar teclado numérico en la casilla de pistola
+# Estilo CSS: Todo en mayúsculas por defecto, EXCEPTO el campo del correo Zimbra
 st.markdown("""
     <style>
     input, textarea {
@@ -19,8 +19,8 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-st.title("🛡️Grupo de Reserva Táctica")
-st.subheader("Ficha Personal")
+st.title("🛡️ Jefatura de Policía de Montevideo")
+st.subheader("Ficha Personal y de Dotación")
 st.markdown("---")
 
 # Pantalla de doble validación de Cédula
@@ -103,10 +103,34 @@ if cedula_valida:
         )
         legajo = st.number_input("Número de Legajo", value=None, step=1, format="%d")
         
-        st.markdown("#### 🔫 Armamento")
-        marca_arma = st.selectbox("Marca de Pistola", ["Seleccione...", "HK", "Glock"])
+        # Nuevas fechas de ingreso institucional
+        st.markdown("📅 **Fecha de Ingreso a la Policía**")
+        col_ip1, col_ip2, col_ip3 = st.columns(3)
+        with col_ip1:
+            dia_ing_pol = st.selectbox("Día Pol.", [str(i).zfill(2) for i in range(1, 32)], key="d_pol")
+        with col_ip2:
+            mes_ing_pol = st.selectbox("Mes Pol.", [str(i).zfill(2) for i in range(1, 13)], key="m_pol")
+        with col_ip3:
+            anio_ing_pol = st.number_input("Año Pol. (AAAA)", min_value=1990, max_value=2026, value=2015, step=1, format="%d", key="a_pol")
+            
+        st.markdown("📅 **Fecha de Ingreso al GRT**")
+        col_ig1, col_ig2, col_ig3 = st.columns(3)
+        with col_ig1:
+            dia_ing_grt = st.selectbox("Día GRT", [str(i).zfill(2) for i in range(1, 32)], key="d_grt")
+        with col_ig2:
+            mes_ing_grt = st.selectbox("Mes GRT", [str(i).zfill(2) for i in range(1, 13)], key="m_grt")
+        with col_ig3:
+            anio_ing_grt = st.number_input("Año GRT (AAAA)", min_value=2000, max_value=2026, value=2024, step=1, format="%d", key="a_grt")
+
+        procedencia = st.text_input("¿De dónde viene? (Procedencia / Unidad anterior)").upper()
         
-        # Número de Pistola como número para que abra el teclado numérico en celulares
+        st.markdown("---")
+        st.markdown("#### 🔫 Armamento y Situación")
+        
+        desarmado = st.selectbox("¿Está desarmado?", ["No", "Sí"])
+        motivo_desarmado = st.text_area("Explique por qué está desarmado (Opcional)").upper()
+        
+        marca_arma = st.selectbox("Marca de Pistola", ["Seleccione...", "HK", "Glock"])
         num_arma_num = st.number_input("Número de Pistola", value=None, step=1, format="%d")
         num_arma = str(num_arma_num) if num_arma_num is not None else ""
         
