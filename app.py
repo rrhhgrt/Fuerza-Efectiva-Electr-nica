@@ -7,11 +7,14 @@ st.set_page_config(
     layout="centered"
 )
 
-# Forzar visualmente que todo texto ingresado en los campos sea Mayúsculas en tiempo real
+# Estilo CSS: Todo en mayúsculas por defecto, EXCEPTO los campos marcados como minúsculas (Zimbra y emails)
 st.markdown("""
     <style>
     input, textarea {
         text-transform: uppercase;
+    }
+    input.lowercase-input {
+        text-transform: lowercase !important;
     }
     </style>
 """, unsafe_allow_html=True)
@@ -73,13 +76,13 @@ if cedula_1 and cedula_2:
             telefono = st.text_input("Número de Teléfono / Celular")
             tel_emergencia = st.text_input("Teléfono de Emergencia")
             
-            # Correo Zimbra autocompletado
+            # Correo Zimbra en minúsculas obligatorias
             st.text("Correo Zimbra:")
             col_z1, col_z2 = st.columns([2, 3])
             with col_z1:
-                correo_usuario = st.text_input("Usuario (lo que antecede)", placeholder="nombre.apellido").strip().upper()
+                correo_usuario = st.text_input("Usuario (lo que antecede)", placeholder="nombre.apellido", key="zimbra_user").strip().lower()
             with col_z2:
-                st.markdown("<br><b>@MINTERIOR.GUB.UY</b>", unsafe_allow_html=True)
+                st.markdown("<br><span style='text-transform: lowercase;'><b>@minterior.gub.uy</b></span>", unsafe_allow_html=True)
             
             st.markdown("---")
             
@@ -102,12 +105,8 @@ if cedula_1 and cedula_2:
             marca_chaleco = st.selectbox("Marca de Chaleco Balístico", ["Seleccione...", "Kavro", "Marom Dolphin", "Xin Xing", "Caballero"])
             num_chaleco = st.text_input("Número de Chaleco Balístico").upper()
             
-            st.text("Vencimiento del Chaleco Balístico:")
-            col_cv1, col_cv2 = st.columns(2)
-            with col_cv1:
-                mes_venc_chaleco = st.selectbox("Mes Venc.", ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Setiembre", "Octubre", "Noviembre", "Diciembre"])
-            with col_cv2:
-                anio_venc_chaleco = st.text_input("Año Venc. (AAAA)", value="2028").upper()
+            # Vencimiento simplificado solo a Año
+            anio_venc_chaleco = st.text_input("Año Vencimiento Chaleco (AAAA)", value="2028").upper()
                 
             talle_chaleco = st.selectbox("Talle de Chaleco Balístico", ["S", "M", "L", "XL", "XXL"])
             
@@ -144,17 +143,10 @@ if cedula_1 and cedula_2:
             with col_obs3:
                 violencia_domestica = st.selectbox("¿Violencia doméstica?", ["No", "Sí"])
             
-            # Campos adicionales de ampliación si responden "Sí"
-            detalle_sumario = ""
-            detalle_amenazas = ""
-            detalle_vd = ""
-            
-            if sumario == "Sí":
-                detalle_sumario = st.text_area("Amplíe información sobre el Sumario").upper()
-            if amenazas == "Sí":
-                detalle_amenazas = st.text_area("Amplíe información sobre las Amenazas").upper()
-            if violencia_domestica == "Sí":
-                detalle_vd = st.text_area("Amplíe información sobre Violencia Doméstica").upper()
+            # Casillas opcionales de detalle siempre visibles
+            detalle_sumario = st.text_area("Detalles sobre Sumario (Opcional)").upper()
+            detalle_amenazas = st.text_area("Detalles sobre Amenazas (Opcional)").upper()
+            detalle_vd = st.text_area("Detalles sobre Violencia Doméstica (Opcional)").upper()
             
             st.markdown("---")
             
