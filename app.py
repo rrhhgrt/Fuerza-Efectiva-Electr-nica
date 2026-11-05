@@ -2,7 +2,7 @@ import streamlit as st
 
 # Configuración de la página web
 st.set_page_config(
-    page_title="Ficha Personal - Jefatura de Policía de Montevideo",
+    page_title="Ficha Personal - GRT",
     page_icon="🛡️",
     layout="centered"
 )
@@ -19,8 +19,8 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-st.title("🛡️ Jefatura de Policía de Montevideo")
-st.subheader("Ficha Personal y de Dotación")
+st.title("🛡️ GRUPO DE RESERVA TÁCTICA")
+st.subheader("Ficha Personal")
 st.markdown("---")
 
 # Pantalla de doble validación de Cédula
@@ -103,7 +103,7 @@ if cedula_valida:
         )
         legajo = st.number_input("Número de Legajo", value=None, step=1, format="%d")
         
-        # Nuevas fechas de ingreso institucional
+        # Fechas de ingreso institucional
         st.markdown("📅 **Fecha de Ingreso a la Policía**")
         col_ip1, col_ip2, col_ip3 = st.columns(3)
         with col_ip1:
