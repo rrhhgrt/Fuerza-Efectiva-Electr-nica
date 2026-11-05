@@ -19,7 +19,7 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-st.title("🛡️ GRUPO DE RESERVA TÁCTICA")
+st.title("GRUPO DE RESERVA TÁCTICA")
 st.subheader("Ficha Personal")
 st.markdown("---")
 
