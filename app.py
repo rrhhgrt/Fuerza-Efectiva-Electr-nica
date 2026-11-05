@@ -19,7 +19,7 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-st.title("🛡️ GRUPO DE RESERVA TÁCTICA")
+st.title("GRUPO DE RESERVA TÁCTICA")
 st.subheader("Ficha Personal")
 st.markdown("---")
 
@@ -170,7 +170,6 @@ if cedula_valida:
         nivel_educativo = st.selectbox("Nivel Educativo", ["Primaria", "Ciclo Básico", "Bachillerato / Secundaria", "Terciaria / Universitaria"])
         enfermedad_cronica = st.text_input("¿Posee alguna enfermedad crónica? ¿Cuál?", value="NO").upper()
         
-        # Nuevas casillas de Cursos y SISCOVE
         llave_siscove = st.text_input("Llave SISCOVE (Número / Estado)").upper()
         curso_sgsp = st.selectbox("¿Posee Curso SGSP?", ["No", "Sí"])
         otros_cursos = st.text_area("Otros Cursos (Detalle)").upper()
@@ -183,23 +182,4 @@ if cedula_valida:
         with col_obs3:
             violencia_domestica = st.selectbox("¿Violencia doméstica?", ["No", "Sí"])
         
-        detalle_sumario = st.text_area("Detalles sobre Sumario (Opcional)").upper()
-        detalle_amenazas = st.text_area("Detalles sobre Amenazas (Opcional)").upper()
-        detalle_vd = st.text_area("Detalles sobre Violencia Doméstica (Opcional)").upper()
-        
-        st.markdown("---")
-        
-        # --- SECCIÓN 6: DOCUMENTACIÓN ---
-        st.subheader("6. Documentación")
-        foto_cedula = st.file_uploader("Adjuntar Foto de la Cédula o Documentos", type=["jpg", "jpeg", "png"])
-        
-        enviar = st.form_submit_button("Enviar Ficha de Registro")
-        
-        if enviar:
-            if not apellidos or not nombres or cargo == "Seleccione..." or marca_arma == "Seleccione..." or marca_chaleco == "Seleccione..." or not foto_cedula or legajo is None or telefono is None or num_chaleco is None or num_arma_num is None:
-                st.error("Por favor, complete todos los campos obligatorios incluyendo la foto, legajo, teléfono, número de pistola y número de chaleco.")
-            else:
-                st.success("¡Ficha enviada con éxito! Quedará pendiente de aprobación por la administración.")
-                st.balloons()
-else:
-    st.info("ℹ️ Ingrese su número de cédula (8 dígitos) en ambos campos para habilitar el formulario.")
+        detalle_sumario = st.text_area("Detalles sobre Sumario
