@@ -7,13 +7,14 @@ st.set_page_config(
     layout="centered"
 )
 
-# Estilo CSS: Todo en mayúsculas por defecto, EXCEPTO los campos marcados como minúsculas (Zimbra y emails)
+# Estilo CSS: Todo en mayúsculas por defecto, EXCEPTO el campo del correo Zimbra
 st.markdown("""
     <style>
     input, textarea {
         text-transform: uppercase;
     }
-    input.lowercase-input {
+    /* Excepción para que el campo de Zimbra se vea siempre en minúsculas */
+    div[data-testid="stTextInput"] input[aria-label="Usuario (lo que antecede)"] {
         text-transform: lowercase !important;
     }
     </style>
@@ -76,11 +77,11 @@ if cedula_1 and cedula_2:
             telefono = st.text_input("Número de Teléfono / Celular")
             tel_emergencia = st.text_input("Teléfono de Emergencia")
             
-            # Correo Zimbra en minúsculas obligatorias
+            # Correo Zimbra en minúsculas
             st.text("Correo Zimbra:")
             col_z1, col_z2 = st.columns([2, 3])
             with col_z1:
-                correo_usuario = st.text_input("Usuario (lo que antecede)", placeholder="nombre.apellido", key="zimbra_user").strip().lower()
+                correo_usuario = st.text_input("Usuario (lo que antecede)", placeholder="nombre.apellido").strip().lower()
             with col_z2:
                 st.markdown("<br><span style='text-transform: lowercase;'><b>@minterior.gub.uy</b></span>", unsafe_allow_html=True)
             
@@ -105,7 +106,6 @@ if cedula_1 and cedula_2:
             marca_chaleco = st.selectbox("Marca de Chaleco Balístico", ["Seleccione...", "Kavro", "Marom Dolphin", "Xin Xing", "Caballero"])
             num_chaleco = st.text_input("Número de Chaleco Balístico").upper()
             
-            # Vencimiento simplificado solo a Año
             anio_venc_chaleco = st.text_input("Año Vencimiento Chaleco (AAAA)", value="2028").upper()
                 
             talle_chaleco = st.selectbox("Talle de Chaleco Balístico", ["S", "M", "L", "XL", "XXL"])
@@ -143,7 +143,6 @@ if cedula_1 and cedula_2:
             with col_obs3:
                 violencia_domestica = st.selectbox("¿Violencia doméstica?", ["No", "Sí"])
             
-            # Casillas opcionales de detalle siempre visibles
             detalle_sumario = st.text_area("Detalles sobre Sumario (Opcional)").upper()
             detalle_amenazas = st.text_area("Detalles sobre Amenazas (Opcional)").upper()
             detalle_vd = st.text_area("Detalles sobre Violencia Doméstica (Opcional)").upper()
