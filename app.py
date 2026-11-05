@@ -17,9 +17,9 @@ st.subheader("1. Validación de Identidad")
 col1, col2 = st.columns(2)
 
 with col1:
-    cedula_1 = st.text_input("Ingrese su Cédula de Identidad")
+    cedula_1 = st.text_input("Ingrese su Cédula de Identidad").strip()
 with col2:
-    cedula_2 = st.text_input("Reingrese su Cédula para confirmar")
+    cedula_2 = st.text_input("Reingrese su Cédula para confirmar").strip()
 
 # Validación de cédulas
 if cedula_1 and cedula_2:
@@ -29,31 +29,44 @@ if cedula_1 and cedula_2:
         st.success(f"Cédula verificada correctamente: **{cedula_1}**")
         st.markdown("---")
         
-        # Formulario principal basado exactamente en la ficha de papel
+        # Formulario principal
         with st.form("form_ficha_policial", clear_on_submit=True):
             
             # --- SECCIÓN 2: DATOS PERSONALES ---
             st.subheader("2. Datos Personales")
-            apellidos = st.text_input("Apellidos")
-            nombres = st.text_input("Nombres")
-            autogenerado = st.text_input("Autogenerado")
-            cred_civica = st.text_input("Credencial Cívica (Número y Serie)")
+            apellidos = st.text_input("Apellidos").upper()
+            nombres = st.text_input("Nombres").upper()
+            autogenerado = st.text_input("Autogenerado").upper()
+            
+            col_cr1, col_cr2 = st.columns(2)
+            with col_cr1:
+                cred_civica = st.text_input("Credencial Cívica (Número y Serie)").upper()
+            with col_cr2:
+                depto_credencial = st.text_input("Departamento de la Credencial Cívica").upper()
+                
             estado_civil = st.selectbox("Estado Civil", ["Soltero/a", "Casado/a", "Divorciado/a", "Viudo/a"])
             
             col_f1, col_f2 = st.columns(2)
             with col_f1:
-                fecha_nac = st.text_input("Fecha de Nacimiento (DD/MM/AAAA)")
+                fecha_nac = st.text_input("Fecha de Nacimiento", placeholder="DD/MM/AAAA").upper()
             with col_f2:
-                lugar_nac = st.text_input("Lugar de Nacimiento (Ciudad / Departamento)")
+                lugar_nac = st.text_input("Lugar de Nacimiento (Ciudad / Departamento)").upper()
                 
-            domicilio = st.text_input("Domicilio (Calle, N°, Apto, Asentamiento)")
-            entre_calles = st.text_input("Entre Calles")
-            localidad = st.text_input("Ciudad o Localidad")
-            departamento = st.text_input("Departamento", value="Montevideo")
+            domicilio = st.text_input("Domicilio (Calle, N°, Apto, Asentamiento)").upper()
+            entre_calles = st.text_input("Entre Calles").upper()
+            localidad = st.text_input("Ciudad o Localidad").upper()
+            departamento = st.text_input("Departamento", value="MONTEVIDEO").upper()
             
             telefono = st.text_input("Número de Teléfono / Celular")
             tel_emergencia = st.text_input("Teléfono de Emergencia")
-            correo = st.text_input("Correo Electrónico / Zimbra")
+            
+            # Correo Zimbra autocompletado
+            st.text("Correo Zimbra:")
+            col_z1, col_z2 = st.columns([2, 3])
+            with col_z1:
+                correo_usuario = st.text_input("usuario (lo que antecede)", placeholder="nombre.apellido").strip().lower()
+            with col_z2:
+                st.markdown("<br><b>@minterior.gub.uy</b>", unsafe_allow_html=True)
             
             st.markdown("---")
             
@@ -61,23 +74,21 @@ if cedula_1 and cedula_2:
             st.subheader("3. Datos Funcionales y Dotación")
             
             cargo = st.selectbox(
-                "Cargo / Grado",
-                ["Agente", "Cabo", "Sargento", "Oficial Sub Ayudante", "Oficial Ayudante", "Oficial Principal", "Comisario"]
+                "Grado",
+                ["Seleccione...", "Agente", "Cabo", "Sargento", "Sub Comisario", "Oficial Ayudante", "Oficial Principal", "Comisario"]
             )
-            chapa = st.text_input("Número de Chapa")
             legajo = st.text_input("Número de Legajo")
-            funcion = st.text_input("Función que Desempeña (Ej. Judiciales)")
             
             st.markdown("#### 🔫 Armamento")
-            marca_arma = st.selectbox("Marca de Pistola", ["Glock", "Bersa Thunder", "Browning", "Otra"])
-            num_arma = st.text_input("Número de Pistola")
+            marca_arma = st.selectbox("Marca de Pistola", ["Seleccione...", "HK", "Glock"])
+            num_arma = st.text_input("Número de Pistola").upper()
             cant_cargadores = st.number_input("Cantidad de Cargadores", min_value=0, value=3)
             cant_municiones = st.number_input("Cantidad de Municiones", min_value=0, value=15)
             
             st.markdown("#### 🛡️ Chaleco Balístico")
-            marca_chaleco = st.text_input("Marca de Chaleco Balístico (Ej. MC-CONFORT - IIIA)")
-            num_chaleco = st.text_input("Número de Chaleco Balístico")
-            venc_chaleco = st.text_input("Año y Mes de Vencimiento del Chaleco (Ej. Abril/2028)")
+            marca_chaleco = st.selectbox("Marca de Chaleco Balístico", ["Seleccione...", "Kavro", "Marom Dolphin", "Xin Xing", "Caballero"])
+            num_chaleco = st.text_input("Número de Chaleco Balístico").upper()
+            venc_chaleco = st.text_input("Año y Mes de Vencimiento del Chaleco", placeholder="MM/AAAA").upper()
             talle_chaleco = st.selectbox("Talle de Chaleco Balístico", ["S", "M", "L", "XL", "XXL"])
             
             st.markdown("---")
@@ -96,15 +107,22 @@ if cedula_1 and cedula_2:
                 t_pantalon = st.selectbox("Talle Pantalón", ["S", "M", "L", "XL", "XXL"], index=1)
                 t_kepi = st.selectbox("Talle Kepi", ["S", "M", "L", "XL"], index=1)
                 
-            t_botas = st.text_input("Talle de Botas (Ej. 42)")
+            t_botas = st.text_input("Talle de Botas", placeholder="Ej. 42")
             
             st.markdown("---")
             
-            # --- SECCIÓN 5: SALUD Y EDUCACIÓN ---
-            st.subheader("5. Salud y Educación")
+            # --- SECCIÓN 5: SALUD, EDUCACIÓN Y OBSERVACIONES ---
+            st.subheader("5. Salud, Educación y Antecedentes")
             nivel_educativo = st.selectbox("Nivel Educativo", ["Primaria", "Ciclo Básico", "Bachillerato / Secundaria", "Terciaria / Universitaria"])
-            enfermedad_cronica = st.text_input("¿Posee alguna enfermedad crónica? ¿Cuál? (Si no posee, escriba No)")
-            carnet_salud = st.selectbox("¿Posee Carné de Salud vigente?", ["Sí", "No"])
+            enfermedad_cronica = st.text_input("¿Posee alguna enfermedad crónica? ¿Cuál?", value="NO").upper()
+            
+            col_obs1, col_obs2, col_obs3 = st.columns(3)
+            with col_obs1:
+                sumario = st.selectbox("¿Tiene sumario?", ["No", "Sí"])
+            with col_obs2:
+                amenazas = st.selectbox("¿Amenazas?", ["No", "Sí"])
+            with col_obs3:
+                violencia_domestica = st.selectbox("¿Violencia doméstica?", ["No", "Sí"])
             
             st.markdown("---")
             
@@ -115,8 +133,8 @@ if cedula_1 and cedula_2:
             enviar = st.form_submit_button("Enviar Ficha de Registro")
             
             if enviar:
-                if not apellidos or not nombres or not chapa or not foto_cedula:
-                    st.error("Por favor, complete los campos obligatorios (Apellidos, Nombres, Chapa y la Foto).")
+                if not apellidos or not nombres or cargo == "Seleccione..." or marca_arma == "Seleccione..." or marca_chaleco == "Seleccione..." or not foto_cedula:
+                    st.error("Por favor, complete los campos obligatorios (Apellidos, Nombres, Grado, Arma, Chaleco y la Foto).")
                 else:
                     st.success("¡Ficha enviada con éxito! Quedará pendiente de aprobación por la administración.")
                     st.balloons()
