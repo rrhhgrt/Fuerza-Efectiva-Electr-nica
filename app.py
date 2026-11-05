@@ -1,5 +1,4 @@
 import streamlit as st
-from datetime import datetime
 
 # Configuración de la página web
 st.set_page_config(
@@ -7,6 +6,15 @@ st.set_page_config(
     page_icon="🛡️",
     layout="centered"
 )
+
+# Forzar visualmente que todo texto ingresado en los campos sea Mayúsculas en tiempo real
+st.markdown("""
+    <style>
+    input, textarea {
+        text-transform: uppercase;
+    }
+    </style>
+""", unsafe_allow_html=True)
 
 st.title("🛡️ Jefatura de Policía de Montevideo")
 st.subheader("Ficha Personal y de Dotación")
@@ -46,11 +54,16 @@ if cedula_1 and cedula_2:
                 
             estado_civil = st.selectbox("Estado Civil", ["Soltero/a", "Casado/a", "Divorciado/a", "Viudo/a"])
             
-            col_f1, col_f2 = st.columns(2)
-            with col_f1:
-                fecha_nac = st.text_input("Fecha de Nacimiento", placeholder="DD/MM/AAAA").upper()
-            with col_f2:
-                lugar_nac = st.text_input("Lugar de Nacimiento (Ciudad / Departamento)").upper()
+            st.text("Fecha de Nacimiento:")
+            col_fn1, col_fn2, col_fn3 = st.columns(3)
+            with col_fn1:
+                dia_nac = st.selectbox("Día Nac.", [str(i).zfill(2) for i in range(1, 32)])
+            with col_fn2:
+                mes_nac = st.selectbox("Mes Nac.", [str(i).zfill(2) for i in range(1, 13)])
+            with col_fn3:
+                anio_nac = st.text_input("Año Nac. (AAAA)", value="1990").upper()
+                
+            lugar_nac = st.text_input("Lugar de Nacimiento (Ciudad / Departamento)").upper()
                 
             domicilio = st.text_input("Domicilio (Calle, N°, Apto, Asentamiento)").upper()
             entre_calles = st.text_input("Entre Calles").upper()
@@ -64,9 +77,9 @@ if cedula_1 and cedula_2:
             st.text("Correo Zimbra:")
             col_z1, col_z2 = st.columns([2, 3])
             with col_z1:
-                correo_usuario = st.text_input("usuario (lo que antecede)", placeholder="nombre.apellido").strip().lower()
+                correo_usuario = st.text_input("Usuario (lo que antecede)", placeholder="nombre.apellido").strip().upper()
             with col_z2:
-                st.markdown("<br><b>@minterior.gub.uy</b>", unsafe_allow_html=True)
+                st.markdown("<br><b>@MINTERIOR.GUB.UY</b>", unsafe_allow_html=True)
             
             st.markdown("---")
             
@@ -75,9 +88,9 @@ if cedula_1 and cedula_2:
             
             cargo = st.selectbox(
                 "Grado",
-                ["Seleccione...", "Agente", "Cabo", "Sargento", "Sub Comisario", "Oficial Ayudante", "Oficial Principal", "Comisario"]
+                ["Seleccione...", "Agente", "Cabo", "Sargento", "Sub Oficial Mayor", "Oficial Ayudante", "Oficial Principal", "Sub Comisario", "Comisario"]
             )
-            legajo = st.text_input("Número de Legajo")
+            legajo = st.text_input("Número de Legajo").upper()
             
             st.markdown("#### 🔫 Armamento")
             marca_arma = st.selectbox("Marca de Pistola", ["Seleccione...", "HK", "Glock"])
@@ -88,7 +101,14 @@ if cedula_1 and cedula_2:
             st.markdown("#### 🛡️ Chaleco Balístico")
             marca_chaleco = st.selectbox("Marca de Chaleco Balístico", ["Seleccione...", "Kavro", "Marom Dolphin", "Xin Xing", "Caballero"])
             num_chaleco = st.text_input("Número de Chaleco Balístico").upper()
-            venc_chaleco = st.text_input("Año y Mes de Vencimiento del Chaleco", placeholder="MM/AAAA").upper()
+            
+            st.text("Vencimiento del Chaleco Balístico:")
+            col_cv1, col_cv2 = st.columns(2)
+            with col_cv1:
+                mes_venc_chaleco = st.selectbox("Mes Venc.", ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Setiembre", "Octubre", "Noviembre", "Diciembre"])
+            with col_cv2:
+                anio_venc_chaleco = st.text_input("Año Venc. (AAAA)", value="2028").upper()
+                
             talle_chaleco = st.selectbox("Talle de Chaleco Balístico", ["S", "M", "L", "XL", "XXL"])
             
             st.markdown("---")
@@ -107,11 +127,11 @@ if cedula_1 and cedula_2:
                 t_pantalon = st.selectbox("Talle Pantalón", ["S", "M", "L", "XL", "XXL"], index=1)
                 t_kepi = st.selectbox("Talle Kepi", ["S", "M", "L", "XL"], index=1)
                 
-            t_botas = st.text_input("Talle de Botas", placeholder="Ej. 42")
+            t_botas = st.text_input("Talle de Botas", placeholder="EJ. 42").upper()
             
             st.markdown("---")
             
-            # --- SECCIÓN 5: SALUD, EDUCACIÓN Y OBSERVACIONES ---
+            # --- SECCIÓN 5: SALUD, EDUCACIÓN Y ANTECEDENTES ---
             st.subheader("5. Salud, Educación y Antecedentes")
             nivel_educativo = st.selectbox("Nivel Educativo", ["Primaria", "Ciclo Básico", "Bachillerato / Secundaria", "Terciaria / Universitaria"])
             enfermedad_cronica = st.text_input("¿Posee alguna enfermedad crónica? ¿Cuál?", value="NO").upper()
@@ -123,6 +143,18 @@ if cedula_1 and cedula_2:
                 amenazas = st.selectbox("¿Amenazas?", ["No", "Sí"])
             with col_obs3:
                 violencia_domestica = st.selectbox("¿Violencia doméstica?", ["No", "Sí"])
+            
+            # Campos adicionales de ampliación si responden "Sí"
+            detalle_sumario = ""
+            detalle_amenazas = ""
+            detalle_vd = ""
+            
+            if sumario == "Sí":
+                detalle_sumario = st.text_area("Amplíe información sobre el Sumario").upper()
+            if amenazas == "Sí":
+                detalle_amenazas = st.text_area("Amplíe información sobre las Amenazas").upper()
+            if violencia_domestica == "Sí":
+                detalle_vd = st.text_area("Amplíe información sobre Violencia Doméstica").upper()
             
             st.markdown("---")
             
