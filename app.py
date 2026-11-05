@@ -19,8 +19,8 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-st.title("🛡️ Jefatura de Policía de Montevideo")
-st.subheader("Ficha Personal y de Dotación")
+st.title("🛡️Grupo de Reserva Táctica")
+st.subheader("Ficha Personal")
 st.markdown("---")
 
 # Pantalla de doble validación de Cédula
