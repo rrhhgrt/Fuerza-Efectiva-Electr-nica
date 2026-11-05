@@ -13,7 +13,6 @@ st.markdown("""
     input, textarea {
         text-transform: uppercase;
     }
-    /* Excepción para que el campo de Zimbra se vea siempre en minúsculas */
     div[data-testid="stTextInput"] input[aria-label="Usuario (lo que antecede)"] {
         text-transform: lowercase !important;
     }
@@ -24,21 +23,24 @@ st.title("🛡️ Jefatura de Policía de Montevideo")
 st.subheader("Ficha Personal y de Dotación")
 st.markdown("---")
 
-# Pantalla de doble validación de Cédula (Seguridad inicial: Exactamente 8 dígitos numéricos)
+# Pantalla de doble validación de Cédula (Despliega teclado numérico al tocar)
 st.subheader("1. Validación de Identidad")
 col1, col2 = st.columns(2)
 
 with col1:
-    cedula_1 = st.text_input("Ingrese su Cédula de Identidad (8 dígitos)", max_chars=8).strip()
+    cedula_1_num = st.number_input("Ingrese su Cédula de Identidad", value=None, step=1, format="%d")
 with col2:
-    cedula_2 = st.text_input("Reingrese su Cédula para confirmar", max_chars=8).strip()
+    cedula_2_num = st.number_input("Reingrese su Cédula para confirmar", value=None, step=1, format="%d")
 
-# Validar que ambas estén completas y tengan exactamente 8 dígitos numéricos
+# Convertir a texto para validar la longitud exacta de 8 dígitos
+cedula_1 = str(cedula_1_num) if cedula_1_num is not None else ""
+cedula_2 = str(cedula_2_num) if cedula_2_num is not None else ""
+
 cedula_valida = False
 
-if cedula_1 or cedula_2:
-    if not (cedula_1.isdigit() and cedula_2.isdigit() and len(cedula_1) == 8 and len(cedula_2) == 8):
-        st.warning("⚠️ La cédula debe contener exclusivamente **8 dígitos numéricos** en ambos campos.")
+if cedula_1_num is not None or cedula_2_num is not None:
+    if len(cedula_1) != 8 or len(cedula_2) != 8:
+        st.warning("⚠️ La cédula debe contener exactamente **8 dígitos numéricos** en ambos campos.")
     elif cedula_1 != cedula_2:
         st.error("⚠️ Las cédulas no coinciden. Por favor, verifique e intente nuevamente.")
     else:
@@ -46,7 +48,7 @@ if cedula_1 or cedula_2:
         st.success(f"Cédula verificada correctamente: **{cedula_1}**")
         st.markdown("---")
 
-# El formulario completo solo se despliega si la cédula es correcta (8 dígitos y coinciden)
+# El formulario completo solo se despliega si la cédula es correcta
 if cedula_valida:
     with st.form("form_ficha_policial", clear_on_submit=True):
         
@@ -71,7 +73,7 @@ if cedula_valida:
         with col_fn2:
             mes_nac = st.selectbox("Mes Nac.", [str(i).zfill(2) for i in range(1, 13)])
         with col_fn3:
-            anio_nac = st.text_input("Año Nac. (AAAA)", value="1990").upper()
+            anio_nac = st.number_input("Año Nac. (AAAA)", min_value=1940, max_value=2010, value=1990, step=1, format="%d")
             
         lugar_nac = st.text_input("Lugar de Nacimiento (Ciudad / Departamento)").upper()
             
@@ -80,9 +82,9 @@ if cedula_valida:
         localidad = st.text_input("Ciudad o Localidad").upper()
         departamento = st.text_input("Departamento", value="MONTEVIDEO").upper()
         
-        # Campos estrictamente numéricos para teléfonos
-        telefono = st.text_input("Número de Teléfono / Celular (Solo números)", placeholder="EJ. 099123456").strip()
-        tel_emergencia = st.text_input("Teléfono de Emergencia (Solo números)", placeholder="EJ. 099123456").strip()
+        # Campos numéricos (Abren teclado numérico en celulares)
+        telefono = st.number_input("Número de Teléfono / Celular", value=None, step=1, format="%d")
+        tel_emergencia = st.number_input("Teléfono de Emergencia", value=None, step=1, format="%d")
         
         # Correo Zimbra en minúsculas
         st.text("Correo Zimbra:")
@@ -101,19 +103,19 @@ if cedula_valida:
             "Grado",
             ["Seleccione...", "Agente", "Cabo", "Sargento", "Sub Oficial Mayor", "Oficial Ayudante", "Oficial Principal", "Sub Comisario", "Comisario"]
         )
-        legajo = st.text_input("Número de Legajo (Solo números)").strip()
+        legajo = st.number_input("Número de Legajo", value=None, step=1, format="%d")
         
         st.markdown("#### 🔫 Armamento")
         marca_arma = st.selectbox("Marca de Pistola", ["Seleccione...", "HK", "Glock"])
-        num_arma = st.text_input("Número de Pistola (Solo números)").strip()
-        cant_cargadores = st.number_input("Cantidad de Cargadores", min_value=0, value=3)
-        cant_municiones = st.number_input("Cantidad de Municiones", min_value=0, value=15)
+        num_arma = st.text_input("Número de Pistola").upper()  # Mantiene texto por si incluye serie alfanumérica
+        cant_cargadores = st.number_input("Cantidad de Cargadores", min_value=0, value=3, step=1)
+        cant_municiones = st.number_input("Cantidad de Municiones", min_value=0, value=15, step=1)
         
         st.markdown("#### 🛡️ Chaleco Balístico")
         marca_chaleco = st.selectbox("Marca de Chaleco Balístico", ["Seleccione...", "Kavro", "Marom Dolphin", "Xin Xing", "Caballero"])
-        num_chaleco = st.text_input("Número de Chaleco Balístico (Solo números)").strip()
+        num_chaleco = st.number_input("Número de Chaleco Balístico", value=None, step=1, format="%d")
         
-        anio_venc_chaleco = st.text_input("Año Vencimiento Chaleco (AAAA)", value="2028").upper()
+        anio_venc_chaleco = st.number_input("Año Vencimiento Chaleco (AAAA)", min_value=2024, max_value=2040, value=2028, step=1, format="%d")
             
         talle_chaleco = st.selectbox("Talle de Chaleco Balístico", ["S", "M", "L", "XL", "XXL"])
         
@@ -133,7 +135,7 @@ if cedula_valida:
             t_pantalon = st.selectbox("Talle Pantalón", ["S", "M", "L", "XL", "XXL"], index=1)
             t_kepi = st.selectbox("Talle Kepi", ["S", "M", "L", "XL"], index=1)
             
-        t_botas = st.text_input("Talle de Botas", placeholder="EJ. 42").upper()
+        t_botas = st.number_input("Talle de Botas", min_value=34, max_value=50, value=42, step=1)
         
         st.markdown("---")
         
@@ -163,26 +165,10 @@ if cedula_valida:
         enviar = st.form_submit_button("Enviar Ficha de Registro")
         
         if enviar:
-            # Validar que los campos numéricos contengan solo números
-            campos_numericos = [
-                (telefono, "Teléfono"),
-                (tel_emergencia, "Teléfono de Emergencia"),
-                (legajo, "Número de Legajo"),
-                (num_arma, "Número de Pistola"),
-                (num_chaleco, "Número de Chaleco Balístico")
-            ]
-            
-            error_numerico = False
-            for valor, nombre_campo in campos_numericos:
-                if valor and not valor.isdigit():
-                    st.error(f"⚠️ El campo **{nombre_campo}** debe contener únicamente números.")
-                    error_numerico = True
-            
-            if not error_numerico:
-                if not apellidos or not nombres or cargo == "Seleccione..." or marca_arma == "Seleccione..." or marca_chaleco == "Seleccione..." or not foto_cedula:
-                    st.error("Por favor, complete los campos obligatorios (Apellidos, Nombres, Grado, Arma, Chaleco y la Foto).")
-                else:
-                    st.success("¡Ficha enviada con éxito! Quedará pendiente de aprobación por la administración.")
-                    st.balloons()
+            if not apellidos or not nombres or cargo == "Seleccione..." or marca_arma == "Seleccione..." or marca_chaleco == "Seleccione..." or not foto_cedula or legajo is None or telefono is None or num_chaleco is None:
+                st.error("Por favor, complete todos los campos obligatorios incluyendo la foto, legajo, teléfono y número de chaleco.")
+            else:
+                st.success("¡Ficha enviada con éxito! Quedará pendiente de aprobación por la administración.")
+                st.balloons()
 else:
-    st.info("ℹ️ Ingrese su número de cédula (exactamente 8 dígitos) en ambos campos para habilitar el formulario.")
+    st.info("ℹ️ Ingrese su número de cédula (8 dígitos) en ambos campos para habilitar el formulario.")
