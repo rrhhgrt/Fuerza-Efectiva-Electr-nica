@@ -170,6 +170,11 @@ if cedula_valida:
         nivel_educativo = st.selectbox("Nivel Educativo", ["Primaria", "Ciclo Básico", "Bachillerato / Secundaria", "Terciaria / Universitaria"])
         enfermedad_cronica = st.text_input("¿Posee alguna enfermedad crónica? ¿Cuál?", value="NO").upper()
         
+        # Nuevas casillas de Cursos y SISCOVE
+        llave_siscove = st.text_input("Llave SISCOVE (Número / Estado)").upper()
+        curso_sgsp = st.selectbox("¿Posee Curso SGSP?", ["No", "Sí"])
+        otros_cursos = st.text_area("Otros Cursos (Detalle)").upper()
+        
         col_obs1, col_obs2, col_obs3 = st.columns(3)
         with col_obs1:
             sumario = st.selectbox("¿Tiene sumario?", ["No", "Sí"])
